@@ -32,6 +32,12 @@
 #define DURATION_TEST_MODE			0
 #define REVOLUTIONS_NB_TEST_MODE	1
 
+#define MENU_0	"OK"
+#define MENU_1	"Mode"	//Test mode
+#define MENU_2	"Speed"	
+#define MENU_3A	"Dura"	//Test duration
+#define MENU_3B	"Revo"	//Test revolutions
+
 void refreshScreen();
 uint8_t test();
 int getCurrent(); //get the current passing through the motor in mA
@@ -57,14 +63,7 @@ uint8_t motor_revo_counter = 0;
 uint8_t effective_test_duration = 0;
 long current_sum = 0;
 long current_measures_nb = 0;
-
 long t = millis();
-
-#define MENU_0	"OK"
-#define MENU_1	"Mode"	//Test mode
-#define MENU_2	"Speed"	
-#define MENU_3A	"Dura"	//Test duration
-#define MENU_3B	"Revo"	//Test revolutions
 
 void setup()
 {
@@ -75,12 +74,7 @@ void setup()
     	Serial.println(F("SSD1306 allocation failed"));
     	for(;;); // Don't proceed, loop forever
 	}
-	// Show initial display buffer contents on the screen --
-	// the library initializes this with an Adafruit splash screen.
 	
-	//display.display();
-	//delay(2000); // Pause for 2 seconds
-
 	// Clear the buffer
 	display.clearDisplay();
 	display.drawBitmap(
@@ -94,6 +88,8 @@ void setup()
 	display.println(F("DC motor"));
 	display.setCursor(92,8);
 	display.println(F("tester"));
+	display.setCursor(98,16);
+	display.println(F("V 1.0"));
 	display.setCursor(104,47);
 	display.println(F("2019"));
 	display.setCursor(80,56);
@@ -107,46 +103,38 @@ void setup()
 	pinMode(SW_PIN, INPUT_PULLUP);
 
 	analogReference(INTERNAL);//set analog reference to 1.1V instead of the 5V default
-
-	//Serial.println("Boot OK");
 }
 
 void loop()
 {
-	delay(10);
 	long newPosition = myEnc.read();
 	if (newPosition != oldPosition) {
 		Serial.println(newPosition);
-		//if(test_state == MENU){ //deleted bc in test mode selec_menu_or_value is set to CHANGE_VALUE
-			int8_t tmp = (int8_t)(newPosition - oldPosition);
-		    if(selec_menu_or_value == MENU_SELEC){
-		        buffer_selec_menu += tmp;
-		        menu = (uint8_t)((int8_t)menu + buffer_selec_menu/4)%MENU_ITEM_NB;
-		        buffer_selec_menu = buffer_selec_menu%4;
-		        Serial.print(buffer_selec_menu);
-		        Serial.print("\tmenu :");
-		        Serial.println(menu);
-		    }
-		    else{//CHANGE_VALUE
-		    	buffer_change_value += tmp;
-		    	if(menu == SET_SPEED){
-		    	    motor_speed = (uint8_t)(((int)motor_speed + (int)buffer_change_value/4)%256);
-		    	}
-		    	else if(menu == DURATION_OR_REVO){
-		    		if(test_mode == DURATION_TEST_MODE){
-		    		    test_duration = (uint8_t)(((int)test_duration + (int)buffer_change_value/4)%256);
-		    		}
-		    		else{
-		    			test_revolutions_nb = (uint8_t)(((int)test_revolutions_nb + (int)buffer_change_value/4)%256);
-		    		}
-		    	}
-		    	buffer_change_value = buffer_change_value%4;
-		    }
-		//}
+		int8_t tmp = (int8_t)(newPosition - oldPosition);
+	    if(selec_menu_or_value == MENU_SELEC){
+	        buffer_selec_menu += tmp;
+	        menu = (uint8_t)((int8_t)menu + buffer_selec_menu/4)%MENU_ITEM_NB;
+	        buffer_selec_menu = buffer_selec_menu%4;
+	        Serial.print(buffer_selec_menu);
+	        Serial.print("\tmenu :");
+	        Serial.println(menu);
+	    }
+	    else{//CHANGE_VALUE
+	    	buffer_change_value += tmp;
+	    	if(menu == SET_SPEED){
+	    	    motor_speed = (uint8_t)(((int)motor_speed + (int)buffer_change_value/4)%256);
+	    	}
+	    	else if(menu == DURATION_OR_REVO){
+	    		if(test_mode == DURATION_TEST_MODE){
+	    		    test_duration = (uint8_t)(((int)test_duration + (int)buffer_change_value/4)%256);
+	    		}
+	    		else{
+	    			test_revolutions_nb = (uint8_t)(((int)test_revolutions_nb + (int)buffer_change_value/4)%256);
+	    		}
+	    	}
+	    	buffer_change_value = buffer_change_value%4;
+	    }
     	oldPosition = newPosition;
-    	//Serial.print(menuPosition);
-    	//Serial.print(" | ");
-    	//Serial.println(menuPosition/4);
     	refreshScreen();
 	}
 
@@ -290,7 +278,6 @@ void refreshScreen()
 			display.println(F("I="));
 			display.setCursor(24,32);
 			display.println(getCurrent());
-			//Serial.println(getCurrent());
 			current_sum += (long)getCurrent();
 			current_measures_nb++;
 			display.setCursor(60,32);
@@ -306,9 +293,6 @@ void refreshScreen()
 			else{//REVOLUTIONS_NB_TEST_MODE
 				count = ((int)motor_revo_counter)*8/((int)test_revolutions_nb);
 			}
-			//Serial.println(t - millis());
-			//Serial.println(((long)test_duration)*1000);
-			//Serial.println(count);
 			for (int i = 0; i < count; ++i)
 			{
 				display.setCursor(12+i*12,48);
