@@ -1,9 +1,12 @@
 //By Romain THOMAS    (2019)    UTT
 
+//battery.level()
+
 #include "parameters.h"
 #include "pins.h"
 #include "logo.h"
 #include <Encoder.h>
+#include <Battery.h>
 #include <SPI.h>
 #include <Wire.h>
 #include <Adafruit_GFX.h>
@@ -43,6 +46,7 @@ uint8_t test();
 int getCurrent(); //get the current passing through the motor in mA
 
 Encoder myEnc(ENCODER_A_PIN, ENCODER_B_PIN);
+Battery battery(MIN_BATTERY, MAX_BATTERY, BATTERY_PIN);
 Adafruit_SSD1306 display(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, OLED_RESET);
 
 long oldPosition  = 0;
@@ -68,6 +72,8 @@ long t = millis();
 void setup()
 {
 	Serial.begin(57600);
+	
+	battery.begin(5000, 1.0, &sigmoidal);
 
 	 // SSD1306_SWITCHCAPVCC = generate display voltage from 3.3V internally
 	if(!display.begin(SSD1306_SWITCHCAPVCC, 0x3C)) { // Address 0x3D for 128x64
@@ -90,6 +96,12 @@ void setup()
 	display.println(F("tester"));
 	display.setCursor(98,16);
 	display.println(F("V 1.0"));
+	display.setCursor(80,24);
+	display.println(F("Bat "));
+	display.setCursor(104,24);
+	display.println(battery.level());
+	display.setCursor(122,24);
+	display.println(F("%"));
 	display.setCursor(104,47);
 	display.println(F("2019"));
 	display.setCursor(80,56);
@@ -102,11 +114,13 @@ void setup()
 	pinMode(MOTOR_REV_COUNTER, INPUT_PULLUP);
 	pinMode(SW_PIN, INPUT_PULLUP);
 
-	analogReference(INTERNAL);//set analog reference to 1.1V instead of the 5V default
+	//analogReference(INTERNAL);//set analog reference to 1.1V instead of the 5V default
+	//disable because of the battery value are up to 4.2 V
 }
 
 void loop()
 {
+	Serial.println(battery.level());
 	long newPosition = myEnc.read();
 	if (newPosition != oldPosition) {
 		Serial.println(newPosition);
@@ -199,9 +213,16 @@ void loop()
 void refreshScreen()
 {
 	display.clearDisplay();
-	display.setTextSize(2);
 
 	if(test_state == TEST_EXITED){
+		display.setTextSize(1);
+		display.setCursor(104,0);
+		display.println(battery.level());
+		display.setCursor(122,0);
+		display.println(F("%"));
+
+		display.setTextSize(2);
+
 		if(menu == OK){
 		    display.setTextColor(BLACK, WHITE);
 		}
@@ -268,6 +289,7 @@ void refreshScreen()
 	    }
 	}
 	else{
+		display.setTextSize(2);
 	    if(test_state == TEST_IN_PROGRESS){
 	        display.setTextColor(WHITE, BLACK);
 			display.setCursor(0,0);
@@ -370,9 +392,9 @@ uint8_t test()
 
 int getCurrent()
 {
-	return map(analogRead(CURRENT_MES_R_PIN), 0, 1023, 0, 917);
+	return map(analogRead(CURRENT_MES_R_PIN), 0, 1023, 0, 4167);
 	//R = 1.2 Ohms
 	//U=RI ==> I=U/R
-	//Umax = 1.1V ==> 1023
-	//Imax = 1.1/1.2*1000 = 917 mA
+	//Umax = 5V ==> 1023
+	//Imax = 5/1.2*1000 = 4167 mA
 }

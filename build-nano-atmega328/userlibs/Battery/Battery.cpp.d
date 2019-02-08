@@ -1,5 +1,5 @@
-build-nano-atmega328/Testeur_moteurs_pour_Olivier_DIDON.ino.o: \
- Testeur_moteurs_pour_Olivier_DIDON.ino \
+build-nano-atmega328/userlibs/Battery/Battery.cpp.o: \
+ libs/Battery/Battery.cpp libs/Battery/Battery.h \
  /usr/share/arduino-1.8.5/hardware/arduino/avr/cores/arduino/Arduino.h \
  /usr/share/arduino-1.8.5/hardware/arduino/avr/cores/arduino/binary.h \
  /usr/share/arduino-1.8.5/hardware/arduino/avr/cores/arduino/WCharacter.h \
@@ -11,13 +11,4 @@ build-nano-atmega328/Testeur_moteurs_pour_Olivier_DIDON.ino.o: \
  /usr/share/arduino-1.8.5/hardware/arduino/avr/cores/arduino/USBAPI.h \
  /usr/share/arduino-1.8.5/hardware/arduino/avr/cores/arduino/Arduino.h \
  /usr/share/arduino-1.8.5/hardware/arduino/avr/variants/eightanaloginputs/pins_arduino.h \
- /usr/share/arduino-1.8.5/hardware/arduino/avr/variants/eightanaloginputs/../standard/pins_arduino.h \
- parameters.h pins.h logo.h libs/Encoder/Encoder.h \
- libs/Encoder/utility/direct_pin_read.h \
- libs/Encoder/utility/interrupt_pins.h \
- /usr/share/arduino-1.8.5/hardware/arduino/avr/libraries/SPI/src/SPI.h \
- /usr/share/arduino-1.8.5/hardware/arduino/avr/libraries/Wire/src/Wire.h \
- /usr/share/arduino-1.8.5/hardware/arduino/avr/cores/arduino/Stream.h \
- libs/Adafruit-GFX/Adafruit_GFX.h \
- /usr/share/arduino-1.8.5/hardware/arduino/avr/cores/arduino/Print.h \
- libs/Adafruit-GFX/gfxfont.h libs/Adafruit_SSD1306/Adafruit_SSD1306.h
+ /usr/share/arduino-1.8.5/hardware/arduino/avr/variants/eightanaloginputs/../standard/pins_arduino.h

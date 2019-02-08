@@ -4,7 +4,7 @@ BOARD_TAG    = nano
 BOARD_SUB    = atmega328
 #MONITOR_PORT = /dev/ttyACM0
 USER_LIB_PATH := libs
-ARDUINO_LIBS += Encoder Adafruit-GFX Adafruit_SSD1306 Wire SPI
+ARDUINO_LIBS += Encoder Battery Adafruit-GFX Adafruit_SSD1306 Wire SPI
 
 include /home/romain/Documents/Arduino-Makefile-master/Arduino.mk
 

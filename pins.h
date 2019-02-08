@@ -8,5 +8,6 @@
 #define ENCODER_A_PIN		3
 #define ENCODER_B_PIN		2
 #define CURRENT_MES_R_PIN	A0 //current measurement resistor pin
+#define BATTERY_PIN			A3
 
 #endif
